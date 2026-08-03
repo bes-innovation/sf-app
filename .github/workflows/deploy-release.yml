@@ -4,11 +4,16 @@ name: Deploy Release Candidate to UAT
 # candidate, not a merge into a fixed staging branch. Creating release/x.y.z
 # from develop is the "cut"; every subsequent push (a PR-merged stabilization
 # fix) redeploys the same candidate to UAT.
+#
+# No `paths` filter here on purpose: cutting a release branch is usually a
+# pure ref creation with zero new commits over develop, so there's no diff
+# for a path filter to match against -- GitHub silently skips the whole
+# trigger in that case, not just the path-gated part. The cut itself must
+# always deploy, diff or not.
 
 on:
   push:
     branches: ['release/**']
-    paths: ['force-app/**']
 
 jobs:
   deploy:
