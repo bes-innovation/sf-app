@@ -2,7 +2,7 @@ name: PR Title Check
 
 on:
   pull_request:
-    branches: [develop, staging, main]
+    branches: [develop, 'release/**', main]
     types: [opened, edited, synchronize]
 
 jobs:
