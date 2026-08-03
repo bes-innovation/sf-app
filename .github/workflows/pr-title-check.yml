@@ -8,3 +8,11 @@ on:
 jobs:
   check:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-pr-title-check-wfl.yml@v1
+    with:
+      # [<squad>][<ticket-key>] Description, e.g.
+      # [CG][JIRA-5632] Add welcome banner to home page
+      # Squad acronyms match the kickoff deck: CG=Cloud Gaia, AC=Accenture,
+      # CP=Capgemini, TK=Taak. Ticket key is generic ([A-Z]+-digits) rather
+      # than hardcoded to a literal "JIRA-" prefix, since the real Jira
+      # project key may differ -- tighten this once that's confirmed.
+      pr_title_regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'
