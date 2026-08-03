@@ -42,3 +42,19 @@ jobs:
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The commitish here (release/x.y.z) differs from the one the draft
+      # accumulated against (develop), which can make release-drafter create
+      # a fresh release instead of promoting the existing draft -- leaving a
+      # stale, orphaned draft still pointed at develop. Whatever the cause,
+      # there should never be more than the one fresh draft that starts
+      # accumulating from the next develop merge, so clean up any leftovers.
+      - name: Remove stray drafts left behind by the publish above
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/releases" --jq '.[] | select(.draft==true) | .id' | \
+            while read -r id; do
+              gh api -X DELETE "repos/${{ github.repository }}/releases/$id"
+              echo "Deleted stray draft release id $id"
+            done
