@@ -32,3 +32,13 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # main now has everything the release/* branch had, including any
+  # stabilization fixes made only during UAT -- without this, those fixes
+  # stay stuck in prod and reappear as "new" bugs in the next release cut.
+  backpromote:
+    needs: deploy
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-backpromote-wfl.yml@v1

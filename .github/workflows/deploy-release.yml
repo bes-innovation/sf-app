@@ -1,0 +1,39 @@
+name: Deploy Release Candidate to UAT
+
+# Fires on push to any release/* branch -- the branch itself IS the release
+# candidate, not a merge into a fixed staging branch. Creating release/x.y.z
+# from develop is the "cut"; every subsequent push (a PR-merged stabilization
+# fix) redeploys the same candidate to UAT.
+
+on:
+  push:
+    branches: ['release/**']
+    paths: ['force-app/**']
+
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      pull-requests: read
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-deploy-wfl.yml@v1
+    with:
+      environment: uat
+      target-org: uat
+    secrets: inherit
+
+  # Turns the accumulated draft (everything merged into develop since the
+  # last cut) into a real, tagged pre-release pinned to this exact release
+  # branch -- the record of what's being validated in this UAT cycle.
+  publish-release-candidate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: release-drafter/release-drafter@v6
+        with:
+          commitish: ${{ github.ref_name }}
+          publish: true
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
