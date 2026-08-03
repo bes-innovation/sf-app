@@ -1,0 +1,13 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# No categories/labels -- every merged PR shows up, regardless of whether
+# anyone remembered to label it. Simple and complete beats organized and lossy.
+version-resolver:
+  default: patch
+
+change-template: '- $TITLE (#$NUMBER)'
+
+template: |
+  ## Changelog
+  $CHANGES

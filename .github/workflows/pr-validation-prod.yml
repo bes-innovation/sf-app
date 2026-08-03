@@ -1,0 +1,15 @@
+name: PR Validation on Production
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['force-app/**']
+
+jobs:
+  validate:
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
+    with:
+      environment: prod
+      target-org: prod
+      severity-threshold: "5"
+    secrets: inherit

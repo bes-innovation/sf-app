@@ -1,0 +1,15 @@
+name: PR Validation on Integration
+
+on:
+  pull_request:
+    branches: [develop]
+    paths: ['force-app/**']
+
+jobs:
+  validate:
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
+    with:
+      environment: integration
+      target-org: integration
+      severity-threshold: "5"
+    secrets: inherit

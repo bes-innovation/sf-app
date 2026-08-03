@@ -1,0 +1,10 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    branches: [develop, staging, main]
+    types: [opened, edited, synchronize]
+
+jobs:
+  check:
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-pr-title-check-wfl.yml@v1

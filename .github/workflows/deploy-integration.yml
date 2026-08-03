@@ -1,0 +1,32 @@
+name: Deploy to Integration on Merge
+
+on:
+  push:
+    branches: [develop]
+    paths: ['force-app/**']
+
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      pull-requests: read
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-deploy-wfl.yml@v1
+    with:
+      environment: integration
+      target-org: integration
+    secrets: inherit
+
+  # Keeps a running draft release with everything merged into develop since
+  # the last cut, so there's always an up-to-date changelog of what's queued
+  # for the next promotion to staging/UAT.
+  update-release-draft:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: release-drafter/release-drafter@v6
+        with:
+          commitish: develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
