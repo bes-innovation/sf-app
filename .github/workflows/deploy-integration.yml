@@ -14,6 +14,13 @@ jobs:
     with:
       environment: integration
       target-org: integration
+      # Must match pr-validation-integration.yml. The reusable workflow
+      # defaults to RunLocalTests, which runs every test in the org --
+      # including the 20 stock Communities/Sites sample classes that ship
+      # pre-installed and fail with INSUFFICIENT_ACCESS because Communities
+      # was never configured here. None of that code is in this repo.
+      # RunRelevantTests scopes tests to the deployed metadata instead.
+      test-level: RunRelevantTests
     secrets: inherit
 
   # Keeps a running draft release with everything merged into develop since
