@@ -1,4 +1,14 @@
-name: PR Validation on Integration
+# Status checks render as "<workflow name> / <caller job id> / <reusable
+# workflow's job id>". A reusable workflow always costs that third segment --
+# GitHub gives no way to collapse it -- so the segments are named to carry
+# distinct information instead: `ci-devops / integration / validate`.
+#
+# The caller job is named for its environment rather than `validate`, which
+# would repeat the reusable job's name and produce an identical context string
+# across the integration/release/prod validation workflows. Branch protection
+# matches these strings exactly, so keeping them unique matters once required
+# checks are configured.
+name: ci-devops
 
 on:
   pull_request:
@@ -6,10 +16,15 @@ on:
     paths: ['force-app/**']
 
 jobs:
-  validate:
+  integration:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
     with:
       environment: integration
       target-org: integration
       severity-threshold: "5"
+      # RunLocalTests pulls in the org's stock sample Apex (ChangePasswordControllerTest
+      # et al), which fails with INSUFFICIENT_ACCESS on an org without Communities
+      # configured -- unrelated to anything in this repo. RunRelevantTests scopes tests
+      # to the deployed metadata, so a no-Apex change runs zero tests.
+      test-level: RunRelevantTests
     secrets: inherit

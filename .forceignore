@@ -4,6 +4,11 @@
 
 package.xml
 
+# CustomPermission is not supported in this org's edition (Base Edition):
+# "INVALID_TYPE: Cannot use: CustomPermission in this organization".
+# Kept in the repo, excluded from deploys until the org edition is upgraded.
+**/customPermissions/**
+
 # LWC configuration files
 **/jsconfig.json
 **/.eslintrc.json

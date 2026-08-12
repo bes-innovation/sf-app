@@ -1,4 +1,15 @@
-name: PR Title Check
+# Workflow name is the first segment of the status check as the PR UI renders
+# it: "<workflow name> / <job id>" -> `ci-devops / pr-title-check`.
+#
+# This check is deliberately inlined rather than calling
+# gmd-seed-gh-workflow/.github/workflows/gmd-seed-pr-title-check-wfl.yml.
+# A reusable workflow reports as "<workflow name> / <caller job> / <called job>"
+# -- three segments -- and GitHub offers no way to collapse them. Inlining is
+# the only way to get a two-segment name. The trade-off is that the regex below
+# now lives per-repo instead of centrally; it is five lines and changes rarely,
+# so that is an acceptable price here. Heavier shared logic (validate, deploy)
+# stays in the seed repo, where centralisation earns its keep.
+name: ci-devops
 
 on:
   pull_request:
@@ -6,13 +17,19 @@ on:
     types: [opened, edited, synchronize]
 
 jobs:
-  check:
-    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-pr-title-check-wfl.yml@v1
-    with:
+  # Job id is the second segment of the check name -- renaming it changes the
+  # string branch protection matches on, which silently breaks any required
+  # check rule referencing the old name.
+  pr-title-check:
+    runs-on: ubuntu-latest
+    steps:
       # [<squad>][<ticket-key>] Description, e.g.
       # [CG][JIRA-5632] Add welcome banner to home page
       # Squad acronyms match the kickoff deck: CG=Cloud Gaia, AC=Accenture,
       # CP=Capgemini, TK=Taak. Ticket key is generic ([A-Z]+-digits) rather
       # than hardcoded to a literal "JIRA-" prefix, since the real Jira
       # project key may differ -- tighten this once that's confirmed.
-      pr_title_regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'
+      - uses: Slashgear/action-check-pr-title@v4.3.0
+        name: Check PR title format
+        with:
+          regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'
