@@ -20,4 +20,12 @@ jobs:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-cut-release-wfl.yml@v1
     with:
       version: ${{ inputs.version }}
+      # Turns the draft that accumulated on develop during the development
+      # window into the pre-release for this cycle, pinned to the branch just
+      # cut. Without this the cut creates the branch and leaves the draft a
+      # draft: deploy-release.yml's publish-release-candidate would normally
+      # publish it, but that job never runs, because the branch is created with
+      # GITHUB_TOKEN and GitHub will not fire a workflow from a ref created by
+      # that token.
+      publish-prerelease: true
     secrets: inherit
