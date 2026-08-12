@@ -6,7 +6,11 @@ on:
     types: [opened, edited, synchronize]
 
 jobs:
-  check:
+  # Job id becomes the first half of the reported status check:
+  # "<this job id> / <reusable workflow's job id>" -> `ci-devops / pr-title-check`.
+  # Keep `ci-devops` as the shared prefix across this repo's pipeline checks so
+  # they group together in the PR checks list and in branch protection.
+  ci-devops:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-pr-title-check-wfl.yml@v1
     with:
       # [<squad>][<ticket-key>] Description, e.g.
