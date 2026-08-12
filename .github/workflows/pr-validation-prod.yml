@@ -1,4 +1,6 @@
-name: PR Validation on Production
+# Reports as `ci-devops / prod / validate` -- see pr-validation-integration.yml
+# for why the caller job is named for its environment rather than `validate`.
+name: ci-devops
 
 on:
   pull_request:
@@ -6,7 +8,7 @@ on:
     paths: ['force-app/**']
 
 jobs:
-  validate:
+  prod:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
     with:
       environment: prod
