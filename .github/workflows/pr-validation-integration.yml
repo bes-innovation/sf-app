@@ -12,4 +12,9 @@ jobs:
       environment: integration
       target-org: integration
       severity-threshold: "5"
+      # RunLocalTests pulls in the org's stock sample Apex (ChangePasswordControllerTest
+      # et al), which fails with INSUFFICIENT_ACCESS on an org without Communities
+      # configured -- unrelated to anything in this repo. RunRelevantTests scopes tests
+      # to the deployed metadata, so a no-Apex change runs zero tests.
+      test-level: RunRelevantTests
     secrets: inherit
