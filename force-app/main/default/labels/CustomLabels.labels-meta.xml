@@ -14,6 +14,6 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Confirmation shown after an order is submitted</shortDescription>
-        <value>Your order has been received and is being processed.</value>
+        <value>Your order has been received and is being processed. You will receive a confirmation email shortly.</value>
     </labels>
 </CustomLabels>
