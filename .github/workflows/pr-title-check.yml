@@ -38,21 +38,23 @@ jobs:
         with:
           regexp: '^\[RELEASE\]\[v\d+\.\d+\.\d+\] .+$'
 
-      # main -> develop is the backpromotion lane. The PR is opened by the
-      # backpromote workflow with a fixed machine title:
-      #   Backpromotion: sync main -> develop
-      # There is no ticket behind it, so the squad rule can never pass and the
-      # check sat permanently red on a PR nobody could fix -- observed on #57
-      # and #59, both opened by app/github-actions.
+      # main -> develop is the backpromotion lane:
+      #   [BACKPROMOTION] sync main -> develop
+      # Matches the bracket convention used by the squad and release shapes.
+      # There is no ticket behind an automated sync, so the squad rule could
+      # never pass and the check sat permanently red on a PR nobody could fix
+      # -- observed on #57 and #59, both opened by app/github-actions.
       #
-      # The squad shape is accepted here too, because the same lane is used by
-      # hand whenever the automation cannot open the PR itself (as it could not
-      # while the org blocked Actions from creating pull requests).
+      # The legacy "Backpromotion: sync ..." title is accepted as well, because
+      # the workflow that emits it lives in gmd-seed-gh-workflow behind the v1
+      # tag. Until that lands, both shapes are in flight; accepting both means
+      # the merge order of the two repos cannot break the gate. Drop the legacy
+      # alternative once no open PR carries it.
       - uses: Slashgear/action-check-pr-title@v4.3.0
         name: Check backpromotion PR title
         if: github.head_ref == 'main' && github.base_ref == 'develop'
         with:
-          regexp: '^(Backpromotion: sync .+ -> .+|\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+)$'
+          regexp: '^(\[BACKPROMOTION\] .+|Backpromotion: sync .+ -> .+)$'
 
       # [<squad>][<ticket-key>] Description, e.g.
       # [CG][JIRA-5632] Add welcome banner to home page
