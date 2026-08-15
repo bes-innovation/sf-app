@@ -16,4 +16,12 @@
         <shortDescription>Confirmation shown after an order is submitted</shortDescription>
         <value>Your order has been received and is being processed.</value>
     </labels>
+    <labels>
+        <fullName>Shipping_Notice_Message</fullName>
+        <categories>General</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Notice shown when an order ships</shortDescription>
+        <value>Your order has shipped and is on its way.</value>
+    </labels>
 </CustomLabels>
