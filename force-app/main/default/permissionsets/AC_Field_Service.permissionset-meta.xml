@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>AC Field Service</label>
+    <description>Field service access for the Accenture (AC) squad.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>
