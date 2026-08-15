@@ -117,3 +117,48 @@ jobs:
           latest: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Keeps a draft holding the COMPLETE contents of this release, refreshed on
+  # every merge into the release branch. Runs alongside the candidate publish
+  # above, not instead of it -- this is release-drafter's own documented
+  # prerelease workflow, two jobs in parallel.
+  #
+  # Why the candidates cannot carry the full list themselves: `prerelease: true`
+  # force-enables `include-pre-releases`, so each published rc becomes the next
+  # one's baseline and every candidate after the first shows only its own delta.
+  # That is why v0.1.0-rc.1 read as a single fix rather than the contents of
+  # release 0.1.0.
+  #
+  # This job passes `prerelease: false`, leaving `include-pre-releases` at its
+  # default of false -- so the scan skips every rc and runs from the last FINAL
+  # release instead. The draft therefore always holds the whole release, and
+  # grows by each stabilization fix as it lands.
+  #
+  # Publish this draft at sign-off and it becomes the final vX.Y.Z notes.
+  update-full-release-draft:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      # Pinned to the branch's own version rather than letting release-drafter
+      # resolve one, so the draft is unambiguously "the notes for this release"
+      # and cannot drift onto a version nobody cut.
+      - name: Resolve the release version
+        id: ver
+        run: |
+          BASE="${GITHUB_REF_NAME#release/}"
+          BASE="${BASE#v}"
+          echo "Release branch $GITHUB_REF_NAME -> draft v${BASE}"
+          echo "tag=v${BASE}" >> "$GITHUB_OUTPUT"
+
+      - uses: release-drafter/release-drafter@v6
+        with:
+          commitish: ${{ github.ref_name }}
+          tag: ${{ steps.ver.outputs.tag }}
+          name: ${{ steps.ver.outputs.tag }}
+          publish: false
+          prerelease: false
+          latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
