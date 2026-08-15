@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>CG Invoice Access</label>
-    <description>Invoice access for the Cloud Gaia (CG) squad.</description>
+    <description>Invoice access for the Cloud Gaia (CG) squad, including credit notes.</description>
     <hasActivationRequired>false</hasActivationRequired>
 </PermissionSet>
