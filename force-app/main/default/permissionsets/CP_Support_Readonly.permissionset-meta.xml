@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>CP Support Readonly</label>
+    <description>Read-only support access for the Capgemini (CP) squad.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>
