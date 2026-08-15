@@ -24,6 +24,13 @@ jobs:
     with:
       environment: uat
       target-org: uat
+      # The reusable workflow defaults to RunLocalTests, which means "every
+      # test in the org" -- including the 20 stock Communities/Sites sample
+      # classes the org ships pre-installed and Active. Those fail with
+      # INSUFFICIENT_ACCESS because Communities was never configured, and none
+      # of that code is in this repo. Same trap that broke the Integration
+      # deploy in PR #13; scope to the deployed metadata instead.
+      test-level: RunRelevantTests
     secrets: inherit
 
   # Publishes the next numbered candidate for this cycle. The cut opens rc.0;
@@ -38,6 +45,16 @@ jobs:
       contents: write
       pull-requests: read
     steps:
+      # github-tag-action runs in a Docker container and shells out to git in
+      # the workspace to read existing tags. Without a checkout the workspace
+      # is empty and it dies on "fatal: not a git repository" before doing any
+      # version math at all. fetch-depth: 0 because a shallow clone carries no
+      # tags, which would leave it computing from INITIAL_VERSION instead of
+      # from what the repo actually has.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       # Owns the numbering -- reads the existing git tags and increments the
       # -rc.N suffix. RELEASE_BRANCHES switches between the two shapes:
       # branches matching it get a full version, everything else a candidate.
