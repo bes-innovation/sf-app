@@ -38,6 +38,22 @@ jobs:
         with:
           regexp: '^\[RELEASE\]\[v\d+\.\d+\.\d+\] .+$'
 
+      # main -> develop is the backpromotion lane. The PR is opened by the
+      # backpromote workflow with a fixed machine title:
+      #   Backpromotion: sync main -> develop
+      # There is no ticket behind it, so the squad rule can never pass and the
+      # check sat permanently red on a PR nobody could fix -- observed on #57
+      # and #59, both opened by app/github-actions.
+      #
+      # The squad shape is accepted here too, because the same lane is used by
+      # hand whenever the automation cannot open the PR itself (as it could not
+      # while the org blocked Actions from creating pull requests).
+      - uses: Slashgear/action-check-pr-title@v4.3.0
+        name: Check backpromotion PR title
+        if: github.head_ref == 'main' && github.base_ref == 'develop'
+        with:
+          regexp: '^(Backpromotion: sync .+ -> .+|\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+)$'
+
       # [<squad>][<ticket-key>] Description, e.g.
       # [CG][JIRA-5632] Add welcome banner to home page
       # Squad acronyms match the kickoff deck: CG=Cloud Gaia, AC=Accenture,
@@ -49,6 +65,6 @@ jobs:
       # does trace back to a real ticket.
       - uses: Slashgear/action-check-pr-title@v4.3.0
         name: Check PR title format
-        if: ${{ !(startsWith(github.head_ref, 'release/') && github.base_ref == 'main') }}
+        if: ${{ !(startsWith(github.head_ref, 'release/') && github.base_ref == 'main') && !(github.head_ref == 'main' && github.base_ref == 'develop') }}
         with:
           regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'
