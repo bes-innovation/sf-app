@@ -40,33 +40,16 @@ jobs:
           commitish: main
           publish: true
           prerelease: false
-          # Without this, a prod publish reaches across and consumes the draft
-          # accumulating on develop. release-drafter keeps ONE draft per repo
-          # and uses it to decide "update the existing release or create a new
-          # one", so the develop draft gets retargeted to main, its body
-          # recomputed against main's history, and published as this release.
-          #
-          # That happened on the v0.1.2 hotfix: the published notes were right
-          # (only the hotfix is in prod) but the draft holding #34/#35/#36 was
-          # the object it published, and since release-drafter scopes by
-          # timestamp, those PRs fell behind the new baseline and can never
-          # appear in a generated changelog again.
-          #
-          # The filter is applied to every release BEFORE drafts and published
-          # are split (find-previous-releases.ts), so it hides the develop
-          # draft from a main publish rather than only affecting the baseline.
-          #
-          # Safe here specifically because every final release targets main.
-          # Do NOT copy this to the develop draft job -- no published release
-          # targets develop, so lastRelease would be undefined there and the
-          # changelog range would blow out to the repo's full history.
-          filter-by-commitish: true
+          # filter-by-commitish lives in this config, NOT under `with:`. It is
+          # not an action input -- passing it there is silently ignored, GitHub
+          # only warns "Unexpected input(s)", the job stays green, and the
+          # develop draft is consumed anyway. That is how PR #38 failed to fix
+          # this, and why the v0.1.6 promotion destroyed the draft a second
+          # time despite the fix appearing to be in place.
+          config-name: release-drafter-prod.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # main now has everything the release/* branch had, including any
-  # stabilization fixes made only during UAT -- without this, those fixes
-  # stay stuck in prod and reappear as "new" bugs in the next release cut.
   # Which branch this merge came from decides whether a backpromotion is
   # needed at all. A push carries no such information, so it has to be looked
   # up from the PR associated with the merge commit.

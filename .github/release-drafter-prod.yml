@@ -1,0 +1,42 @@
+# Config for the PROD publish only (deploy-prod.yml passes it via config-name).
+#
+# Identical to release-drafter.yml except for filter-by-commitish. Keep the
+# template and version-resolver in sync between the two files -- there is no
+# include mechanism, so they are duplicated on purpose.
+#
+# Why a separate file rather than the shared one: filter-by-commitish must NOT
+# apply to the develop draft. No published release targets develop, so the
+# filter would leave lastRelease undefined there and blow the changelog range
+# out to the repo's entire history.
+
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# Restricts release-drafter to releases whose target matches this run's
+# commitish -- main, here.
+#
+# release-drafter keeps ONE draft per repo and uses it to decide "update the
+# existing release or create a new one". Without this filter the prod publish
+# finds the draft accumulating on develop, retargets it to main, recomputes its
+# body and publishes it -- destroying the next cycle's changelog. Observed
+# twice: on the v0.1.2 hotfix and again on the v0.1.6 promotion.
+#
+# It is a CONFIG option, not an action input. Passing it under `with:` is
+# silently ignored -- GitHub emits "Unexpected input(s) 'filter-by-commitish'"
+# as a warning, the job stays green, and the draft is consumed anyway. That is
+# exactly how PR #38 failed to fix anything.
+#
+# Safe here because every final release targets main, so lastRelease still
+# resolves and the notes and version are unaffected.
+filter-by-commitish: true
+
+# No categories/labels -- every merged PR shows up, regardless of whether
+# anyone remembered to label it. Simple and complete beats organized and lossy.
+version-resolver:
+  default: patch
+
+change-template: '- $TITLE (#$NUMBER)'
+
+template: |
+  ## Changelog
+  $CHANGES
