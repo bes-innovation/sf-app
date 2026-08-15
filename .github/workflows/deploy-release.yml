@@ -45,6 +45,16 @@ jobs:
       contents: write
       pull-requests: read
     steps:
+      # github-tag-action runs in a Docker container and shells out to git in
+      # the workspace to read existing tags. Without a checkout the workspace
+      # is empty and it dies on "fatal: not a git repository" before doing any
+      # version math at all. fetch-depth: 0 because a shallow clone carries no
+      # tags, which would leave it computing from INITIAL_VERSION instead of
+      # from what the repo actually has.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       # Owns the numbering -- reads the existing git tags and increments the
       # -rc.N suffix. RELEASE_BRANCHES switches between the two shapes:
       # branches matching it get a full version, everything else a candidate.
