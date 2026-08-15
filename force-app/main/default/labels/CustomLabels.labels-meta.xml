@@ -6,7 +6,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Welcome message used to validate the Integration pipeline</shortDescription>
-        <value>Welcome to sf-app -- deployed via the GDM Seed pipeline (cut release test).</value>
+        <value>Welcome to sf-app.</value>
     </labels>
     <labels>
         <fullName>Order_Confirmation_Message</fullName>
