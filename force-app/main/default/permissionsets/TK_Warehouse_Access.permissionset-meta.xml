@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>TK Warehouse Access</label>
+    <description>the warehouse access permission set</description>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>
