@@ -52,7 +52,7 @@ jobs:
       # alternative once no open PR carries it.
       - uses: Slashgear/action-check-pr-title@v4.3.0
         name: Check backpromotion PR title
-        if: github.head_ref == 'main' && github.base_ref == 'develop'
+        if: github.base_ref == 'develop' && (github.head_ref == 'main' || startsWith(github.head_ref, 'release/'))
         with:
           regexp: '^(\[BACKPROMOTION\] .+|Backpromotion: sync .+ -> .+)$'
 
@@ -67,6 +67,6 @@ jobs:
       # does trace back to a real ticket.
       - uses: Slashgear/action-check-pr-title@v4.3.0
         name: Check PR title format
-        if: ${{ !(startsWith(github.head_ref, 'release/') && github.base_ref == 'main') && !(github.head_ref == 'main' && github.base_ref == 'develop') }}
+        if: ${{ !(startsWith(github.head_ref, 'release/') && github.base_ref == 'main') && !(github.base_ref == 'develop' && (github.head_ref == 'main' || startsWith(github.head_ref, 'release/'))) }}
         with:
           regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'

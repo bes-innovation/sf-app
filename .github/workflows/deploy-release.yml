@@ -117,3 +117,31 @@ jobs:
           latest: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Carries each stabilization fix back into develop as it lands, rather than
+  # waiting for the promotion to main.
+  #
+  # A fix merged into a release branch during UAT exists nowhere else. Left
+  # here, the next cut from develop reverts it and it returns as a "new" bug.
+  # That is not hypothetical: release/v0.1.0 took PRs #19, #20, #22 and #23
+  # while in validation, none of which were on develop, and every one had to be
+  # hand-carried afterwards.
+  #
+  # Doing it here rather than at the promotion is what lets deploy-prod.yml
+  # skip backpromoting release/** merges: develop is already current by then,
+  # so that PR only ever contained merge commits.
+  #
+  # needs: deploy -- an unvalidated fix should not propagate. The cut itself
+  # never reaches this job: GitHub refuses to trigger a workflow from a ref
+  # created with GITHUB_TOKEN, so only real merges fire it, and a fresh branch
+  # has nothing to carry anyway.
+  backpromote:
+    needs: deploy
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-backpromote-wfl.yml@v1
+    with:
+      head-branch: ${{ github.ref_name }}
+      base-branch: develop
+    secrets: inherit
