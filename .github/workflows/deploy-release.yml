@@ -24,6 +24,13 @@ jobs:
     with:
       environment: uat
       target-org: uat
+      # The reusable workflow defaults to RunLocalTests, which means "every
+      # test in the org" -- including the 20 stock Communities/Sites sample
+      # classes the org ships pre-installed and Active. Those fail with
+      # INSUFFICIENT_ACCESS because Communities was never configured, and none
+      # of that code is in this repo. Same trap that broke the Integration
+      # deploy in PR #13; scope to the deployed metadata instead.
+      test-level: RunRelevantTests
     secrets: inherit
 
   # Publishes the next numbered candidate for this cycle. The cut opens rc.0;
