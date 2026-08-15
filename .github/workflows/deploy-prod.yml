@@ -67,8 +67,38 @@ jobs:
   # main now has everything the release/* branch had, including any
   # stabilization fixes made only during UAT -- without this, those fixes
   # stay stuck in prod and reappear as "new" bugs in the next release cut.
+  # Which branch this merge came from decides whether a backpromotion is
+  # needed at all. A push carries no such information, so it has to be looked
+  # up from the PR associated with the merge commit.
+  detect-source:
+    runs-on: ubuntu-latest
+    outputs:
+      head-ref: ${{ steps.pr.outputs.head-ref }}
+    steps:
+      - name: Look up the merged pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          HEAD_REF=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
+            --jq '.[0].head.ref // empty')
+          echo "Merge into main came from: ${HEAD_REF:-<no associated PR>}"
+          echo "head-ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
+
+  # Skipped for release/** promotions: deploy-release.yml already backpromotes
+  # each stabilization fix into develop as it lands, so by the time the release
+  # reaches main there is nothing left to carry -- only merge commits, which
+  # produced a PR with no real content every cycle.
+  #
+  # Everything else that reaches main exists ONLY on main -- hotfixes above all
+  # -- and must go back, or the next release cut reverts it in production.
+  #
+  # A direct push with no associated PR resolves to an empty head-ref, which
+  # does not match the prefix, so it backpromotes. That is the safe default:
+  # code on main and nowhere else.
   backpromote:
-    needs: deploy
+    needs: [deploy, detect-source]
+    if: ${{ !startsWith(needs.detect-source.outputs.head-ref, 'release/') }}
     permissions:
       contents: write
       pull-requests: write

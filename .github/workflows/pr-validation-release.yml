@@ -18,4 +18,13 @@ jobs:
       environment: uat
       target-org: uat
       severity-threshold: "5"
+      # The reusable workflow defaults to RunLocalTests, which means "every test
+      # in the org" -- including the 20 stock Communities/Sites sample classes
+      # the org ships pre-installed and Active. They fail on INSUFFICIENT_ACCESS
+      # because Communities was never configured, and none of that code is in
+      # this repo, so no repo change can make them pass.
+      #
+      # Fourth workflow to hit this: integration (#13), the UAT deploy (#19),
+      # prod (#27), and now the UAT PR gate. This was the last one left.
+      test-level: RunRelevantTests
     secrets: inherit
