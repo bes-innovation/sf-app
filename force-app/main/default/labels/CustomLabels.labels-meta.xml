@@ -24,4 +24,12 @@
         <shortDescription>Notice shown when an order ships</shortDescription>
         <value>Your order has shipped. Track it using the reference in your confirmation email.</value>
     </labels>
+    <labels>
+        <fullName>Credit_Note_Message</fullName>
+        <categories>General</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Shown when a credit note is issued</shortDescription>
+        <value>A credit note has been issued for this order.</value>
+    </labels>
 </CustomLabels>
