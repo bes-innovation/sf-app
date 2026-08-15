@@ -22,6 +22,6 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Notice shown when an order ships</shortDescription>
-        <value>Your order has shipped and is on its way.</value>
+        <value>Your order has shipped. Track it using the reference in your confirmation email.</value>
     </labels>
 </CustomLabels>
