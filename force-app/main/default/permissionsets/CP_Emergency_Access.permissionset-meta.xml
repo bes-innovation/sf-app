@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>CP Emergency Access</label>
-    <description>Placeholder permission set for the Capgemini (CP) hotfix squad pipeline test.</description>
+    <description>Emergency production access for the Capgemini (CP) hotfix squad.</description>
     <hasActivationRequired>false</hasActivationRequired>
 </PermissionSet>
