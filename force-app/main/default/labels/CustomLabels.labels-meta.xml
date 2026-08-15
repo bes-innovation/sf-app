@@ -8,4 +8,12 @@
         <shortDescription>Welcome message used to validate the Integration pipeline</shortDescription>
         <value>Welcome to sf-app -- deployed via the GDM Seed pipeline (cut release test).</value>
     </labels>
+    <labels>
+        <fullName>Order_Confirmation_Message</fullName>
+        <categories>General</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Confirmation shown after an order is submitted</shortDescription>
+        <value>Your order has been received and is being processed.</value>
+    </labels>
 </CustomLabels>
