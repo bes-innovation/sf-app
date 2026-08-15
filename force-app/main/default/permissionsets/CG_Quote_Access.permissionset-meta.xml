@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>CG Quote Access</label>
+    <description>the quote access permission set</description>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>

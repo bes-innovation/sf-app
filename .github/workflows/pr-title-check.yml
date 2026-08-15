@@ -23,13 +23,32 @@ jobs:
   pr-title-check:
     runs-on: ubuntu-latest
     steps:
+      # Promoting a release to production is not a squad ticket, so it gets its
+      # own shape:
+      #   [RELEASE][v1.4.0] Description
+      # Keyed on the branch pair rather than the title, so it applies only to
+      # release/** -> main and cannot be used to bypass the ticket rule on an
+      # ordinary PR. Without this, a release promotion had to be dressed up as
+      # a fake squad ticket to get past the gate -- see PR #26, titled
+      # "[CG][JIRA-26] Release v0.1.0 to production", which referenced a Jira
+      # issue that does not exist.
+      - uses: Slashgear/action-check-pr-title@v4.3.0
+        name: Check release promotion PR title
+        if: startsWith(github.head_ref, 'release/') && github.base_ref == 'main'
+        with:
+          regexp: '^\[RELEASE\]\[v\d+\.\d+\.\d+\] .+$'
+
       # [<squad>][<ticket-key>] Description, e.g.
       # [CG][JIRA-5632] Add welcome banner to home page
       # Squad acronyms match the kickoff deck: CG=Cloud Gaia, AC=Accenture,
       # CP=Capgemini, TK=Taak. Ticket key is generic ([A-Z]+-digits) rather
       # than hardcoded to a literal "JIRA-" prefix, since the real Jira
       # project key may differ -- tighten this once that's confirmed.
+      #
+      # Still the rule for everything else, including hotfix/** -> main, which
+      # does trace back to a real ticket.
       - uses: Slashgear/action-check-pr-title@v4.3.0
         name: Check PR title format
+        if: ${{ !(startsWith(github.head_ref, 'release/') && github.base_ref == 'main') }}
         with:
           regexp: '^\[(CG|AC|CP|TK)\]\[[A-Z]+-\d+\] .+$'
