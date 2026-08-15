@@ -1,6 +1,22 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 
+# Count release candidates when picking the baseline to scan changes up-to.
+#
+# Without this the develop draft anchors on the last FINAL release, so while a
+# release is in UAT the draft re-lists everything already inside that release
+# candidate -- v0.1.7's draft showed #68 and #69, both merged before the cut
+# and already shipped in v0.1.7-rc.0. The cut publishes no final release, so
+# nothing otherwise tells the draft that content has moved on.
+#
+# With it, the baseline becomes the newest candidate and the draft holds only
+# what landed after it: the backpromotions and genuinely new work.
+#
+# Affects the develop draft alone. The cut and the rc publishes pass
+# prerelease: true, where this option "has no effect (already enabled)", and
+# the prod publish reads release-drafter-prod.yml instead.
+include-pre-releases: true
+
 # No categories/labels -- every merged PR shows up, regardless of whether
 # anyone remembered to label it. Simple and complete beats organized and lossy.
 version-resolver:
