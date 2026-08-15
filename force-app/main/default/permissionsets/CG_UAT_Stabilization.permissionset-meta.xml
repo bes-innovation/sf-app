@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>CG UAT Stabilization</label>
+    <description>Stabilization fix applied during UAT validation of v0.1.6.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>
