@@ -34,3 +34,5 @@ those stages, following the examples in `gmd-seed-gh-workflow`'s README
 `environment: uat` / `prod`, plus `use-quick-deploy: true` and
 backpromotion for prod). Each needs its own GitHub Environment and
 secrets, following the same pattern as `qa` above.
+
+<!-- rc-ladder probe: merged into release/v0.1.0 to verify the candidate counter increments without moving the base version. Safe to delete. -->

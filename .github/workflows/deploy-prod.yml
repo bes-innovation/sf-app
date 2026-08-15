@@ -14,7 +14,17 @@ jobs:
     with:
       environment: prod
       target-org: prod
-      use-quick-deploy: true
+      # Same reason as the prod PR gate: RunLocalTests runs the org's 20 stock
+      # Communities/Sites sample classes, which fail on INSUFFICIENT_ACCESS and
+      # cannot be fixed from this repo.
+      test-level: RunRelevantTests
+      # Quick deploy is OFF as a consequence, not by preference. It requires a
+      # validation that actually executed tests, and RunRelevantTests against a
+      # repo with zero Apex resolves to zero tests -- the quick deploy is then
+      # rejected with CannotQuickDeployError. Restoring the agreed
+      # RunLocalTests + quick-deploy design needs the sample classes cleared
+      # from the org first; it is not a pipeline change.
+      use-quick-deploy: false
     secrets: inherit
 
   # Same release the UAT cycle validated -- just drops the pre-release flag
@@ -32,3 +42,13 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # main now has everything the release/* branch had, including any
+  # stabilization fixes made only during UAT -- without this, those fixes
+  # stay stuck in prod and reappear as "new" bugs in the next release cut.
+  backpromote:
+    needs: deploy
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-backpromote-wfl.yml@v1

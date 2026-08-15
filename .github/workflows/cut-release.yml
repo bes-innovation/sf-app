@@ -1,0 +1,23 @@
+name: Cut Release
+
+# Manual trigger to open a new release/<version> branch from develop. That
+# branch creation is what fires "Deploy Release Candidate to UAT"
+# (deploy-release.yml's push trigger) -- this workflow only creates the
+# branch. Run it from the Actions tab; leave "version" blank to use
+# release-drafter's next resolved version off the running develop draft.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to cut, e.g. 1.4.0 (blank = auto-resolve from release-drafter)"
+        required: false
+
+jobs:
+  cut-release:
+    permissions:
+      contents: write
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-cut-release-wfl.yml@v1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit

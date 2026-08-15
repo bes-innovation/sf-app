@@ -1,0 +1,21 @@
+# Reports as `ci-devops / uat / validate` -- see pr-validation-integration.yml
+# for why the caller job is named for its environment rather than `validate`.
+name: ci-devops
+
+# Stabilization fixes during UAT validation go through a small PR against
+# the release/* branch itself (e.g. fix/xyz -> release/1.4.0), not a raw
+# push -- this is what validates each of those fixes before they redeploy.
+
+on:
+  pull_request:
+    branches: ['release/**']
+    paths: ['force-app/**']
+
+jobs:
+  uat:
+    uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
+    with:
+      environment: uat
+      target-org: uat
+      severity-threshold: "5"
+    secrets: inherit

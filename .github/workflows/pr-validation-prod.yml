@@ -1,4 +1,6 @@
-name: PR Validation on Production
+# Reports as `ci-devops / prod / validate` -- see pr-validation-integration.yml
+# for why the caller job is named for its environment rather than `validate`.
+name: ci-devops
 
 on:
   pull_request:
@@ -6,10 +8,17 @@ on:
     paths: ['force-app/**']
 
 jobs:
-  validate:
+  prod:
     uses: bes-innovation/gmd-seed-gh-workflow/.github/workflows/gmd-seed-sf-validate-wfl.yml@v1
     with:
       environment: prod
       target-org: prod
       severity-threshold: "5"
+      # The reusable workflow defaults to RunLocalTests, which means "every test
+      # in the org" -- including the 20 stock Communities/Sites sample classes
+      # the org ships pre-installed and Active. They fail with
+      # INSUFFICIENT_ACCESS ("EntityObject can not be initialized with null
+      # EntityInfo") because Communities was never configured, and none of that
+      # code lives in this repo, so no repo change can ever make them pass.
+      test-level: RunRelevantTests
     secrets: inherit
